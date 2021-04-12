@@ -22,10 +22,11 @@ SCORE = 0
 SCORE1 = 0
  
 #Setting up Fonts
-font = pygame.font.SysFont("Verdana", 60) #шрифт
+font = pygame.font.SysFont("Verdana", 55) #шрифт
+font2 = pygame.font.SysFont("Verdana", 40) #шриф
 font_small = pygame.font.SysFont("Verdana", 20)  #шрифт 
 game_over = font.render("Game Over", True, BLACK) #слово в конце игре 
- 
+text = font2.render('Score: '+ str(SCORE1),True,BLACK) 
 background = pygame.image.load('AnimatedStreet.png') # фотка на заднем фоне 
  
 #Create a white screen 
@@ -34,20 +35,24 @@ DISPLAYSURF.fill(WHITE) #окно заполняем белым
 pygame.display.set_caption("Game") #название игры гэйм 
  
 class Enemy(pygame.sprite.Sprite):
+      def speed_en(self):
+          return random.randint(1,5)
       def __init__(self):
         super().__init__() 
         self.image = pygame.image.load('Enemy.png') #загружаем фотку противника 
         self.surf = pygame.Surface((42, 70)) #размер энеми 
         self.rect = self.surf.get_rect(center = (random.randint(40,SCREEN_WIDTH-40), 0))#
- 
+        self.speed=self.speed_en()
       def move(self): #движение энеми 
         global SCORE
-        self.rect.move_ip(0,SPEED)
+        self.rect.move_ip(0,self.speed)
+
+
         if (self.rect.top > 600): #если верхняя часть врага достигла конца экрана
             SCORE += 1  #скор прибовляет 1
             self.rect.top = 0   #и его сбрасывает на начало экрана 
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)# на рандомное место по оси Х
-
+            self.speed=self.speed_en()
  
  
 class Coin(pygame.sprite.Sprite):
@@ -60,7 +65,7 @@ class Coin(pygame.sprite.Sprite):
     
     def move(self):
         global SCORE1
-        self.rect.move_ip(0,SPEED)
+        self.rect.move_ip(0,2)
         if (self.rect.top > 600):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
@@ -69,6 +74,7 @@ class Coin(pygame.sprite.Sprite):
             time.sleep(0.5)
             SCORE1 += 1
             self.rect.top = 0
+            self.speed = random.randint(1,5)
 
 
 class Player(pygame.sprite.Sprite):
@@ -142,7 +148,7 @@ while True:
                     
           DISPLAYSURF.fill(RED)
           DISPLAYSURF.blit(game_over, (30,250))
-           
+          DISPLAYSURF.blit(text, (30,310))
           pygame.display.update()
           for entity in all_sprites:
                 entity.kill() 
